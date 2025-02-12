@@ -21,4 +21,4 @@ COPY scripts/ /app/scripts/
 WORKDIR /app
 
 # Run your script
-CMD ["python", "scripts/arraydb-generate-array.py"]
+CMD ["python", "scripts/main_tiledb.py"]
