@@ -15,7 +15,6 @@ def wait_for_postgres():
 
     for attempt in range(max_retries):
         try:
-            print(f"Attempting to connect to PostgreSQL (attempt {attempt + 1}/{max_retries})...")
             conn = psycopg2.connect(db_url)
             conn.close()
             print("Successfully connected to PostgreSQL!")
@@ -38,7 +37,7 @@ def main():
         print("Running main application script...")
         try:
             # Run the main application script
-            result = subprocess.run(["python", "/app/scripts/postgre-generate-array.py"], check=True)
+            result = subprocess.run(["python", "/app/scripts/main_postgre.py"], check=True)
             sys.exit(result.returncode)
         except subprocess.CalledProcessError as e:
             print(f"Error running main script: {e}")

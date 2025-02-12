@@ -33,4 +33,4 @@ WORKDIR /app
 ENV PYTHONPATH="${PYTHONPATH}:/app"
 
 # Ensure PostgreSQL starts first, then run Python script
-CMD ["python", "scripts/postgre-generate-array.py"]
+CMD ["python", "scripts/main_postgre.py"]
