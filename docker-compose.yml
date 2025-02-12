@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  postgres-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: testpassword
+      POSTGRES_USER: testuser
+      POSTGRES_DB: testdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+
+  postgres-app:
+    build:
+      context: ./postgres
+      dockerfile: Dockerfile.app
+    depends_on:
+      - postgres-db
+    environment:
+      DATABASE_URL: postgresql://testuser:testpassword@postgres-db:5432/testdb
+    volumes:
+      - ./postgres/scripts:/app/scripts
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+
+  tiledb-system:
+    build:
+      context: ./tiledb
+      dockerfile: Dockerfile
+    ports:
+      - "5433:5433"
+    volumes:
+      - tiledb_data:/app/data
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+
+volumes:
+  postgres_data:
+  tiledb_data:
