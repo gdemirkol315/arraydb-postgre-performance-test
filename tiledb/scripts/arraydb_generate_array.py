@@ -25,11 +25,20 @@ def create_and_generate_array(array_name="large_tiledb_array", rows=10000, cols=
     data = np.random.randint(0, 100, size=(rows, cols))
     print("Generated a large array with shape:", data.shape)
 
+    # Calculate tile size based on array dimensions
+    min_dimension = min(rows, cols)
+    if min_dimension <= 100:
+        tile_size = 2  # Fixed very small tile size for small arrays
+    else:
+        tile_size = min(min_dimension // 10, min_dimension - 2)  # Ensure we stay well below domain size
+    
+    print(f"Using tile size: {tile_size} for array dimensions: {rows}x{cols}")
+    
     # Define the TileDB schema
     schema = tiledb.ArraySchema(
         domain=tiledb.Domain(
-            tiledb.Dim(name="rows", domain=(0, rows - 1), tile=1000, dtype="int32"),
-            tiledb.Dim(name="cols", domain=(0, cols - 1), tile=1000, dtype="int32"),
+            tiledb.Dim(name="rows", domain=(0, rows - 1), tile=tile_size, dtype="int32"),
+            tiledb.Dim(name="cols", domain=(0, cols - 1), tile=tile_size, dtype="int32"),
         ),
         sparse=False,
         attrs=[tiledb.Attr(name="a", dtype="int32")],

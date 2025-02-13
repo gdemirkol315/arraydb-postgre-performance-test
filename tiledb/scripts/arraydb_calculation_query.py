@@ -2,7 +2,7 @@ import tiledb
 import numpy as np
 import time
 
-def query_array(array_name, row_start=100, row_end=200, col_start=300, col_end=400):
+def query_array(array_name, row_start=0, row_end=49, col_start=0, col_end=49):
     """
     Query a TileDB array and calculate sum and average for a specific slice.
     
