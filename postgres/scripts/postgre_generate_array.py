@@ -3,16 +3,13 @@ from sqlalchemy import create_engine, text
 import time
 import os
 
-def create_and_generate_array(rows:int, cols:int):
-    print("Step 1: Creating and generating array data...")
+def create_array(engine, rows:int, cols:int):
+    print("Creating and generating array data...")
     print("PostgreSQL starting deleting and inserting data")
     # Start the timer
     start_time = time.time()
 
     data = np.random.randint(0, 100, size=(rows, cols))
-
-    # Create PostgreSQL connection
-    engine = create_engine(os.environ["DATABASE_URL"])
 
     # Create a table
     with engine.begin() as conn:
@@ -44,13 +41,10 @@ def create_and_generate_array(rows:int, cols:int):
 
     # Calculate elapsed time
     elapsed_time = end_time - start_time
-    print(f"Elapsed time: {elapsed_time:.4f} seconds")
+    print(f"Array creation time: {elapsed_time:.4f} seconds")
 
-
-    print("Step 2: Calculating sum and mean within slice...")
-    # Define the slice
-    row_start, row_end = 100, 200
-    col_start, col_end = 300, 400
+def calculate_slice(engine, row_start=0, row_end=49, col_start=0, col_end=49):
+    print("Calculating sum and mean within slice...")
 
     # Query to calculate the sum and mean within the slice
     query = text("""
@@ -75,4 +69,6 @@ def create_and_generate_array(rows:int, cols:int):
     print("PostgreSQL Results for Calculation:")
     print("Sum of values in slice:", total_sum)
     print("Mean of values in slice:", average)
-    print(f"PostgreSQL slice calculation time: {end_time - start_time:.4f} seconds")
+    print(f"Slice calculation time: {end_time - start_time:.4f} seconds")
+    
+    return total_sum, average
