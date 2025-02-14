@@ -1,11 +1,8 @@
 import numpy as np
-from sqlalchemy import create_engine, text
+from sqlalchemy import text
 import time
-import os
 
 def create_array(engine, rows:int, cols:int):
-    print("Creating and generating array data...")
-    print("PostgreSQL starting deleting and inserting data")
     # Start the timer
     start_time = time.time()
 
@@ -25,50 +22,30 @@ def create_array(engine, rows:int, cols:int):
             );
         """))
 
-    # Flatten and insert data (convert numpy.int64 to Python int)
-    flattened_data = [{"row": int(r), "col": int(c), "value": int(data[r, c])}
-                    for r in range(rows) for c in range(cols)]
-
-    # Use a connection for batch insertion
+    # Insert data in batches of 100 rows
+    batch_size = 100
+    total_batches = (rows + batch_size - 1) // batch_size  # Calculate total number of batches
+    
     with engine.begin() as conn:
-        # Perform batch insert using parameterized query
         insert_query = text("INSERT INTO large_array (row, col, value) VALUES (:row, :col, :value)")
-        conn.execute(insert_query, flattened_data)
-
-    print("Data stored in PostgreSQL.")
+        
+        for batch_num in range(total_batches):
+            start_row = batch_num * batch_size
+            end_row = min(start_row + batch_size, rows)
+            
+            # Create batch for current rows
+            batch_data = [
+                {"row": int(r), "col": int(c), "value": int(data[r, c])}
+                for r in range(start_row, end_row)
+                for c in range(cols)
+            ]
+            
+            # Execute batch insert
+            conn.execute(insert_query, batch_data)
+    
     # End the timer
     end_time = time.time()
 
     # Calculate elapsed time
     elapsed_time = end_time - start_time
-    print(f"Array creation time: {elapsed_time:.4f} seconds")
-
-def calculate_slice(engine, row_start=0, row_end=49, col_start=0, col_end=49):
-    print("Calculating sum and mean within slice...")
-
-    # Query to calculate the sum and mean within the slice
-    query = text("""
-        SELECT SUM(value) AS total_sum, AVG(value) AS average
-        FROM large_array
-        WHERE row BETWEEN :row_start AND :row_end
-        AND col BETWEEN :col_start AND :col_end;
-    """).bindparams(row_start=row_start, row_end=row_end, col_start=col_start, col_end=col_end)
-
-    # Time the query execution
-    start_time = time.time()
-
-    with engine.connect() as conn:
-        result = conn.execute(query).fetchone()
-    end_time = time.time()
-
-    # Access the results using indices
-    total_sum = result[0]
-    average = result[1]
-
-    # Print the results
-    print("PostgreSQL Results for Calculation:")
-    print("Sum of values in slice:", total_sum)
-    print("Mean of values in slice:", average)
-    print(f"Slice calculation time: {end_time - start_time:.4f} seconds")
-    
-    return total_sum, average
+    print(f"\tData storage completed in {elapsed_time:.4f} seconds")
