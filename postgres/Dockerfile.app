@@ -11,16 +11,19 @@ RUN apt-get update && \
 WORKDIR /app
 
 # Copy requirements file
-COPY requirements.txt .
+COPY postgres/requirements.txt .
 
 # Install Python packages
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy common utils
+COPY common/utils /app/utils/
+
 # Copy your Python scripts
-COPY scripts/ /app/scripts/
+COPY postgres/scripts/ /app/scripts/
 
 # Copy the entrypoint script
-COPY scripts/wait-for-postgres.py /app/wait-for-postgres.py
+COPY postgres/scripts/wait-for-postgres.py /app/wait-for-postgres.py
 
 # Set Python path
 ENV PYTHONPATH="${PYTHONPATH}:/app"

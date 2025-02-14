@@ -48,4 +48,3 @@ def create_array(engine, rows:int, cols:int):
 
     # Calculate elapsed time
     elapsed_time = end_time - start_time
-    print(f"\tData storage completed in {elapsed_time:.4f} seconds")

@@ -2,10 +2,8 @@ import numpy as np
 import tiledb
 import shutil
 import os
-import time
 
 def create_array(array_name="large_tiledb_array", rows=100, cols=100):
-    start_time = time.time()
 
     # Clean up existing array if it exists
     if os.path.exists(array_name):
@@ -22,7 +20,7 @@ def create_array(array_name="large_tiledb_array", rows=100, cols=100):
     else:
         tile_size = min(min_dimension // 10, min_dimension - 2)  # Ensure we stay well below domain size
     
-    print(f"\tUsing tile size: {tile_size} for array dimensions: {rows}x{cols}")
+    print(f"Used tile size: {tile_size} for array dimensions: {rows}x{cols}")
     
     # Define the TileDB schema
     schema = tiledb.ArraySchema(
@@ -40,10 +38,6 @@ def create_array(array_name="large_tiledb_array", rows=100, cols=100):
     # Write data to TileDB
     with tiledb.DenseArray(array_name, mode="w") as array:
         array[:] = {"a": data}
-
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    print(f"\tData storage completed in {elapsed_time:.4f} seconds")
 
 if __name__ == "__main__":
     create_array()

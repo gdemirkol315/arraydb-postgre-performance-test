@@ -26,6 +26,9 @@ COPY init.sql /docker-entrypoint-initdb.d/
 # Copy your Python scripts
 COPY scripts/ /app/scripts/
 
+# Copy common utils
+COPY ../common/utils /app/utils/
+
 # Set working directory
 WORKDIR /app
 

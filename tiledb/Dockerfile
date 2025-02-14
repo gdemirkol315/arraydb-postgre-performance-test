@@ -9,16 +9,22 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements file
-COPY requirements.txt .
+COPY tiledb/requirements.txt .
 
 # Install Python packages
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy common utils
+COPY common/utils /app/utils/
+
 # Copy your Python scripts
-COPY scripts/ /app/scripts/
+COPY tiledb/scripts/ /app/scripts/
 
 # Set working directory
 WORKDIR /app
+
+# Set Python path
+ENV PYTHONPATH="${PYTHONPATH}:/app"
 
 # Run your script
 CMD ["python", "scripts/main_tiledb.py"]
