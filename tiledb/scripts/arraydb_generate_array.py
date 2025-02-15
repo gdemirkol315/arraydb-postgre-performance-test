@@ -2,6 +2,7 @@ import numpy as np
 import tiledb
 import shutil
 import os
+import logging
 
 def create_array(array_name="large_tiledb_array", rows=100, cols=100):
 
