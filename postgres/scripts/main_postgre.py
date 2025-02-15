@@ -28,7 +28,8 @@ def main():
         engine = create_engine(DATABASE_URL)
         
         postgre_experiment(engine,100,100)
-        #postgre_experiment(engine,200,200)
+        postgre_experiment(engine,500,500)
+        postgre_experiment(engine,2000,2000)
         
     except Exception as e:
         print(f"Error occurred: {str(e)}", file=sys.stderr)
@@ -49,7 +50,8 @@ def postgre_experiment(database, rows: int, cols: int):
     monitor.end_operation(f"Array Operations - {operation_name}")
     
     experiment_no = experiment_no + 1
-    print("-" * 50)
+    logger = logging.getLogger("PostgreSQL")
+    logger.info("-" * 50)
 
 if __name__ == "__main__":
     main()

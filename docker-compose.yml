@@ -20,8 +20,8 @@ services:
 
   postgres-app:
     build:
-      context: ./postgres
-      dockerfile: Dockerfile.app
+      context: .
+      dockerfile: postgres/Dockerfile.app
     depends_on:
       - postgres-db
     environment:
@@ -36,8 +36,8 @@ services:
 
   tiledb-system:
     build:
-      context: ./tiledb
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: tiledb/Dockerfile
     ports:
       - "5433:5433"
     volumes:

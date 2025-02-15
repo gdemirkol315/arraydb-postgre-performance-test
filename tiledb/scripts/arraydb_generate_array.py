@@ -19,8 +19,8 @@ def create_array(array_name="large_tiledb_array", rows=100, cols=100):
         tile_size = 2  # Fixed very small tile size for small arrays
     else:
         tile_size = min(min_dimension // 10, min_dimension - 2)  # Ensure we stay well below domain size
-    
-    print(f"Used tile size: {tile_size} for array dimensions: {rows}x{cols}")
+    logger = logging.getLogger("TileDB")
+    logger.info(f"Used tile size: {tile_size} for array dimensions: {rows}x{cols}")
     
     # Define the TileDB schema
     schema = tiledb.ArraySchema(

@@ -23,7 +23,8 @@ def main():
         # Define array parameters
         array_name = os.path.join(current_dir, "large_tiledb_array")
         tiledb_experiment(array_name,100,100)
-        #tiledb_experiment(array_name,200,200)
+        tiledb_experiment(array_name,500,500)
+        tiledb_experiment(array_name,2000,2000)
 
     except Exception as e:
         print(f"Error occurred: {str(e)}", file=sys.stderr)
@@ -31,6 +32,7 @@ def main():
 
 def tiledb_experiment(array_name, rows: int, cols:int):
         global experiment_no
+        logger = logging.getLogger("TileDB")
         operation_name = f"Experiment {experiment_no} ({rows}x{cols})"
         
         # Monitor array creation
@@ -48,7 +50,7 @@ def tiledb_experiment(array_name, rows: int, cols:int):
         monitor.end_operation(f"Array Operations - {operation_name}")
         
         experiment_no = experiment_no + 1
-        print("-" * 50)
+        logger.info("-" * 50)
 
 if __name__ == "__main__":
     main()
