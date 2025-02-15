@@ -8,7 +8,7 @@ def create_array(array_name="large_tiledb_array", rows=100, cols=100):
 
     # Clean up existing array if it exists
     if os.path.exists(array_name):
-        print("\tRemoving existing TileDB array...")
+        logging.info("Removing existing array...")
         shutil.rmtree(array_name)
 
     # Generate a large 2D array
