@@ -50,6 +50,7 @@ class PerformanceMonitor:
         self.logger = logging.getLogger(db_type)
         self.logger.setLevel(logging.INFO)
         self.logger.handlers = []  # Remove any existing handlers
+        self.logger.propagate = False  # Prevent propagation to root logger
         self.logger.addHandler(file_handler)
         self.logger.addHandler(console_handler)
 

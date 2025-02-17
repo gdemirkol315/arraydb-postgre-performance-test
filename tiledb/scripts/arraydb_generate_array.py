@@ -7,8 +7,9 @@ import logging
 def create_array(array_name="large_tiledb_array", rows=100, cols=100):
 
     # Clean up existing array if it exists
+    logger = logging.getLogger("TileDB")
     if os.path.exists(array_name):
-        logging.info("Removing existing array...")
+        logger.info("Removing existing array...")
         shutil.rmtree(array_name)
 
     # Generate a large 2D array
@@ -20,7 +21,6 @@ def create_array(array_name="large_tiledb_array", rows=100, cols=100):
         tile_size = 2  # Fixed very small tile size for small arrays
     else:
         tile_size = min(min_dimension // 10, min_dimension - 2)  # Ensure we stay well below domain size
-    logger = logging.getLogger("TileDB")
     logger.info(f"Used tile size: {tile_size} for array dimensions: {rows}x{cols}")
     
     # Define the TileDB schema
