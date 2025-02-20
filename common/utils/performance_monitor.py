@@ -75,14 +75,14 @@ class PerformanceMonitor:
         # Log only the changes and percentages
         if end_memory is not None and self.start_memory is not None:
             memory_change = end_memory - self.start_memory
-            self.logger.info(f"Memory Change: {memory_change:+.2f} MB")
+            self.logger.info(f"Memory Change: {memory_change:+.4f} MB")
                 
         if end_cpu is not None and self.start_cpu is not None:
             cpu_time = end_cpu - self.start_cpu
             cpu_percent = (cpu_time / execution_time) * 100 if execution_time > 0 else 0
-            self.logger.info(f"CPU Usage: {cpu_percent:.2f}%")
+            self.logger.info(f"CPU Usage: {cpu_percent:.4f}%")
             
-        self.logger.info(f"Time: {execution_time:.2f} seconds")
+        self.logger.info(f"Time: {execution_time:.4f} seconds")
         
 
         # Reset start values

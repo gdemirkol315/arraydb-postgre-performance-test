@@ -13,7 +13,7 @@ if parent_dir not in sys.path:
 
 from arraydb_generate_array import create_array
 from arraydb_calculation import execute_operations
-from utils.performance_monitor import PerformanceMonitor  # Now accessible through PYTHONPATH
+from utils.performance_monitor import PerformanceMonitor
 
 experiment_no:int=1
 monitor = PerformanceMonitor("TileDB")
