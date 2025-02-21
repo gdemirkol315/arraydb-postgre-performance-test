@@ -4,8 +4,38 @@ import logging
 
 class ContainerMetrics:
     def __init__(self):
-        self.cgroup_path = '/sys/fs/cgroup'
+        self.container_id = self._get_container_id()
+        self.cgroup_path = self._get_cgroup_path()
         
+    def _get_container_id(self):
+        """Get current container ID from cgroup"""
+        try:
+            with open('/proc/self/cgroup', 'r') as f:
+                for line in f:
+                    if 'docker' in line:
+                        return line.split('/')[-1].strip()
+            return None
+        except Exception:
+            return None
+            
+    def _get_cgroup_path(self):
+        """Get container-specific cgroup path"""
+        if self.container_id:
+            # Docker cgroup v2 path
+            docker_path = f'/sys/fs/cgroup/docker/{self.container_id}'
+            if os.path.exists(docker_path):
+                return docker_path
+                
+            # Kubernetes cgroup path
+            kube_path = f'/sys/fs/cgroup/kubepods/pod*/{self.container_id}'
+            import glob
+            kube_matches = glob.glob(kube_path)
+            if kube_matches:
+                return kube_matches[0]
+        
+        # Fallback to default cgroup path
+        return '/sys/fs/cgroup'
+    
     def read_memory_usage(self):
         """Read container memory usage in MB"""
         try:
@@ -17,10 +47,21 @@ class ContainerMetrics:
     def read_cpu_usage(self):
         """Read container CPU usage in seconds"""
         try:
-            with open(os.path.join(self.cgroup_path, 'cpu.stat'), 'r') as f:
+            # Try container-specific CPU stats first
+            cpu_stat_path = os.path.join(self.cgroup_path, 'cpu.stat')
+            if not os.path.exists(cpu_stat_path):
+                # Fallback to cpu.usage_usec for older cgroup versions
+                cpu_stat_path = os.path.join(self.cgroup_path, 'cpuacct.usage')
+                if os.path.exists(cpu_stat_path):
+                    with open(cpu_stat_path, 'r') as f:
+                        return float(f.read()) / 1_000_000  # Convert to seconds
+                return None
+                
+            with open(cpu_stat_path, 'r') as f:
                 for line in f:
                     if line.startswith('usage_usec'):
                         return float(line.split()[1]) / 1_000_000  # Convert to seconds
+            return None
         except Exception:
             return None
 
